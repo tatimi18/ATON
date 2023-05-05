@@ -5,39 +5,53 @@ import MyPagination from './MyPagination';
 import { Button } from 'react-bootstrap';
 import MyModal from '../components/MyModal';
 
-
 const APITable = () => {
+
+/* ======= СОСТОЯНИЯ ========================================================= */
+
+    //состояния для работы со списком пользователей
     const [users, setUsers] = useState([])
     const [isLoading, setIsLoading] = useState(false);
+    const [lastUserInPage, setLastUserInPage] = useState(0);
 
+    //cостояния для работы с модальным окном изменения пользователя
+    const [showUpdatingModal, setShowUpdatingModal] = useState(false);
     const [currentUser, setCurrentUser] = useState([])
     const [current_firstName, setCurrent_firstName] = useState('')
     const [current_lastName, setCurrent_lastName] = useState('')
     const [currentEmail, setCurrentEmail] = useState('')
-
-    //открыто ли модальное окно и функция изменения этого значения 
-    const [show, setShow] = useState(false);
-
-    //состояние для серверной пагинации
+    
+    //cостояния для работы с модальным окном добавления пользователя
+    const [showAddingModal, setShowAddingModal] = useState(false);
+    const [addedFirstName, setAddedFirstName] = useState('')
+    const [addedLastName, setAddedLastName] = useState('')
+    const [addedEmail, setAddedEmail] = useState('')
+    const [isValid, setIsValid] = useState('default')
+    
+    //состояния для серверной пагинации
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(0)
-    let [total, setTotal] = useState(0)
 
     function changePage(page) {
         setPage(page)
     }
 
+/* ======= ЛОГИКА ИЗМЕНЕНИЯ ДАННЫХ ПОЛЬЗОВАТЕЛЯ ========================================================= */
+
+    //открывает модальное окно для внесения изменений, добавляет в инпуты значения текущего пользователя
     function showUpdateModal(userToUpdate) {
-        setShow(true)
+        setShowUpdatingModal(true)
         setCurrentUser(userToUpdate)
         setCurrent_firstName(userToUpdate.first_name)
         setCurrent_lastName(userToUpdate.last_name)
         setCurrentEmail(userToUpdate.email)
     }
 
+    //обновляет выбранного пользователя
     function updateUser(item) {
-        let newUser = users.find(elem => elem.first_name === item.first_name)
-        let updatedUser = {...newUser}
+        let currentItem = users.find(elem => elem.id === item.id) //ищем текущего пользователя в списке
+        let updatedUser = {...currentItem} //делаем копию, чтобы заменить значения в ней и дальше по индексу поменять его с оригиналом в списке
+
         Object.defineProperty(updatedUser, 'first_name', {
             value: current_firstName,
         });
@@ -50,21 +64,80 @@ const APITable = () => {
             value: currentEmail,
         });
 
-        let index = users.indexOf(newUser);
+        let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
 
         if (index !== -1) {
             users[index] = updatedUser;
         }
-        setShow(false)
-        return users
+        setShowUpdatingModal(false) //закрываем модальное окно
+        return users //возвращаем обновленный список юзеров
     }
 
+/* ======= ЛОГИКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
 
+    //удаление пользователя из списка
     function removeUser(userToRemove) {
-        setUsers(users.filter(user => 
-            user.email !== userToRemove.email
-        ))
+        let filteredUsers = users.filter(user => user.id !== userToRemove.id)
+        let lastUserInList = filteredUsers[filteredUsers.length - 1]
+
+        //обновляем список юзеров
+        setUsers(filteredUsers)
+
+        //перезаписываем id последнего пользователя в фильтрованном списке
+        setLastUserInPage(lastUserInList.id)
     }
+
+/* ======= ЛОГИКА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
+
+    //добавляет нового пользователя
+    function addNewUser(firstName, lastName, email) {
+        if (!firstName || !lastName || !email) { //если поля не заполнены форма не отправляется
+            setIsValid(false)
+        } else {
+            setIsValid(true)
+            users.push({
+                id: lastUserInPage + 1,
+                first_name: firstName,
+                last_name: lastName,
+                email: email
+            })
+
+            //обновляем состояние индекса последнего пользователя на странице
+            setLastUserInPage(lastUserInPage + 1)
+
+            for (let user of users) {
+                //переприсваиваем индексы начиная с lastUserInPage + 1
+                if (user.id === lastUserInPage + 1) {
+                    for (let i = lastUserInPage + 2; i <= users.length; i += 1) {
+                        user.id += 1
+                    }
+                }
+            }
+            //стираем заполненные поля
+            setAddedFirstName()
+            setAddedLastName()
+            setAddedEmail()
+    
+            // закрываем модальное окно
+            setShowAddingModal(false)
+        }
+    }
+
+    //функция при закрытии модального окна добавления пользователя, сбрасыват все изменения формы, если она не отправлена
+    function handleClose() {
+        //стираем заполненные поля 
+        setAddedFirstName()
+        setAddedLastName()
+        setAddedEmail()
+
+        //скрываем валидацию
+        setIsValid('default')
+
+        // закрываем модальное окно
+        setShowAddingModal(false)
+    }
+
+/* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
 
     useEffect(() => {
         async function fetchingUsers() {
@@ -74,7 +147,7 @@ const APITable = () => {
                 let json = await response.json();
                 setUsers(json.data)
                 setTotalPages(json.total_pages)
-                setTotal(json.total)
+                setLastUserInPage(json.per_page * page)
                 
             } catch (error) {
                 console.log(error.message)
@@ -83,12 +156,20 @@ const APITable = () => {
         }
         fetchingUsers();
     }, [page]);
+
     return (
         <div className='container'>
             {
                 isLoading
                 ? <Spinner animation="border" variant="primary" />
                 : <>
+                    <Button 
+                        style={{marginTop: '70px'}}
+                        onClick={() => setShowAddingModal(true)}
+                        variant="primary"
+                    >   
+                        Добавить в список
+                    </Button>
                     <Table responsive striped bordered hover>
                         <thead className='head-fixed'>
                             <tr className='table__tr table__tr__head'>
@@ -131,11 +212,11 @@ const APITable = () => {
                         changePage={changePage}
                     />
                     <MyModal
-                        show={show}
-                        handleClose={() => setShow(false)}
+                        show={showUpdatingModal}
+                        handleClose={() => setShowUpdatingModal(false)}
                         title={'Измените данные'}
                         body={
-                            <div className='modal__wrapper'>
+                            <form className='modal__wrapper'>
                                 <label htmlFor="firstName">Имя</label>
                                 <input 
                                     type='text' 
@@ -162,9 +243,61 @@ const APITable = () => {
                                     className='modal__input'
                                     onChange={e => setCurrentEmail(e.target.value)}
                                 />
-                            </div>
+                            </form>
                         }
                         action={() => updateUser(currentUser)}
+                    />
+                    <MyModal
+                        show={showAddingModal}
+                        handleClose={handleClose}
+                        title={'Добавьте пользователя в список'}
+                        body={
+                            <form className='modal__wrapper'>
+                                
+                                <label htmlFor="firstName">Имя</label>
+                                <input 
+                                    required
+                                    type='text' 
+                                    name='firstName' 
+                                    className='modal__input'
+                                    placeholder='Введите имя'
+                                    value={addedFirstName || ''} 
+                                    onChange={e => setAddedFirstName(e.target.value)}
+                                />
+
+                                <label htmlFor="lastName">Фамилия</label>
+                                <input 
+                                    required
+                                    type='text' 
+                                    name='lastName' 
+                                    className='modal__input'
+                                    placeholder='Введите фамилию'
+                                    value={addedLastName || ''} 
+                                    onChange={e => setAddedLastName(e.target.value)}
+                                />
+                                    
+                                <label htmlFor="email">Электронная почта</label>
+                                <input 
+                                    required
+                                    type='email' 
+                                    name='email' 
+                                    className='modal__input'
+                                    placeholder='Введите электронную почту'
+                                    value={addedEmail || ''} 
+                                    onChange={e => setAddedEmail(e.target.value)}
+                                />
+                                <div 
+                                    className={
+                                        isValid === false
+                                        ? "modal__error"
+                                        : "modal__error__unvisible"
+                                    }
+                                >
+                                    Заполните все поля
+                                </div>
+                            </form> 
+                        }
+                        action={() => addNewUser(addedFirstName, addedLastName, addedEmail)}    
                     />
                     
                 </>
