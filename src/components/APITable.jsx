@@ -4,6 +4,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import MyPagination from './MyPagination';
 import { Button } from 'react-bootstrap';
 import MyModal from '../components/MyModal';
+import MyAlert from './MyAlert';
 
 const APITable = () => {
 
@@ -31,6 +32,9 @@ const APITable = () => {
     //состояния для серверной пагинации
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(0)
+
+    //состояние уведомлений
+    const [alerts, setAlerts] = useState([])
 
     function changePage(page) {
         setPage(page)
@@ -70,6 +74,11 @@ const APITable = () => {
             users[index] = updatedUser;
         }
         setShowUpdatingModal(false) //закрываем модальное окно
+
+        //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+        alerts.push(`${Math.random()}_info_Пользователь изменен`)
+        setTimeout(() => alerts.pop(), 5000)
+
         return users //возвращаем обновленный список юзеров
     }
 
@@ -79,12 +88,26 @@ const APITable = () => {
     function removeUser(userToRemove) {
         let filteredUsers = users.filter(user => user.id !== userToRemove.id)
         let lastUserInList = filteredUsers[filteredUsers.length - 1]
+        
+        if (filteredUsers.length !== 0) {
+            //обновляем список юзеров
+            setUsers(filteredUsers)
+    
+            //перезаписываем id последнего пользователя в фильтрованном списке
+            setLastUserInPage(lastUserInList.id)
 
-        //обновляем список юзеров
-        setUsers(filteredUsers)
+            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+            alerts.push(`${Math.random()}_danger_Пользователь удален`)
+            setTimeout(() => alerts.pop(), 5200)
+            
+        } else {
+            if (page > 1) {
+                setPage(page - 1)
+            } else {
+                setPage(1)
+            }
+        }
 
-        //перезаписываем id последнего пользователя в фильтрованном списке
-        setLastUserInPage(lastUserInList.id)
     }
 
 /* ======= ЛОГИКА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
@@ -120,6 +143,11 @@ const APITable = () => {
     
             // закрываем модальное окно
             setShowAddingModal(false)
+
+            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+            alerts.push(`${Math.random()}_primary_Пользователь добавлен`)
+            setTimeout(() => alerts.pop(), 5000)
+
         }
     }
 
@@ -137,11 +165,21 @@ const APITable = () => {
         setShowAddingModal(false)
     }
 
-/* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
+    /* ======= УДАЛЕНИЕ АЛЕРТА ИЗ СПИСКА ========================================================= */
+
+    function removeAlert(alertToRemove) {
+        const id = alertToRemove.split('_'[0])
+        alerts.filter(alert => alert.split('_'[0]) !== id)
+        //setAlerts(filteredAlerts)
+    }
+
+    /* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
 
     useEffect(() => {
+        let start;
         async function fetchingUsers() {
             try {
+                start = Date.now() //начало отсчета времени загрузки данных
                 setIsLoading(true)
                 let response = await fetch(`https://reqres.in/api/users?page=${page}&per_page=6`)
                 let json = await response.json();
@@ -152,10 +190,16 @@ const APITable = () => {
             } catch (error) {
                 console.log(error.message)
             } 
+            const end = Date.now()
+            const time = (end - start) / 1000
             setIsLoading(false)
+
+            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+            alerts.unshift(`${Math.random()}_success_Данные получены за ${time} сек.`)
+            setTimeout(() => alerts.shift(), 5000)
         }
         fetchingUsers();
-    }, [page]);
+    }, [alerts, page]);
 
     return (
         <div className='container'>
@@ -299,6 +343,18 @@ const APITable = () => {
                         }
                         action={() => addNewUser(addedFirstName, addedLastName, addedEmail)}    
                     />
+
+                    <div className='alerts__wrapper'>
+
+                        {alerts.reverse().map(alert => 
+                            <MyAlert 
+                                key={alert.split('_')[0]} 
+                                text={alert.split('_')[2]}
+                                variant={alert.split('_')[1]}
+                                onClick={() => removeAlert(alert)}
+                            />
+                        )}
+                    </div>
                     
                 </>
             }
