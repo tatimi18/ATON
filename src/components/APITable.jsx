@@ -5,6 +5,8 @@ import MyPagination from './MyPagination';
 import { Button } from 'react-bootstrap';
 import MyModal from '../components/MyModal';
 import MyAlert from './MyAlert';
+import trash_icon from '../icons/trash_icon.svg'
+import update_icon from '../icons/update_icon.svg'
 
 const APITable = () => {
 
@@ -59,31 +61,44 @@ const APITable = () => {
         if (!current_firstName || !current_lastName || !currentEmail) { //если поля не заполнены форма не отправляется
             setIsValid(false)
         } else {
-            setIsValid(true)
-            Object.defineProperty(updatedUser, 'first_name', {
-                value: current_firstName,
-            });
-    
-            Object.defineProperty(updatedUser, 'last_name', {
-                value: current_lastName,
-            });
-    
-            Object.defineProperty(updatedUser, 'email', {
-                value: currentEmail,
-            });
-    
-            let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
-    
-            if (index !== -1) {
-                users[index] = updatedUser;
+            if (currentItem.first_name === current_firstName && 
+                currentItem.last_name === current_lastName && 
+                currentItem.email === currentEmail) {
+                    
+                    setShowUpdatingModal(false) //закрываем модальное окно
+                    
+                    //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+                    alerts.push(`${Math.random()}_secondary_Данные остались прежними`)
+                    setTimeout(() => alerts.pop(), 5000)
+        
+                    return users //возвращаем обновленный список юзеров
+            } else {
+                setIsValid(true)
+                Object.defineProperty(updatedUser, 'first_name', {
+                    value: current_firstName,
+                });
+        
+                Object.defineProperty(updatedUser, 'last_name', {
+                    value: current_lastName,
+                });
+        
+                Object.defineProperty(updatedUser, 'email', {
+                    value: currentEmail,
+                });
+        
+                let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
+        
+                if (index !== -1) {
+                    users[index] = updatedUser;
+                }
+                setShowUpdatingModal(false) //закрываем модальное окно
+        
+                //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+                alerts.push(`${Math.random()}_info_Пользователь изменен`)
+                setTimeout(() => alerts.pop(), 5000)
+        
+                return users //возвращаем обновленный список юзеров
             }
-            setShowUpdatingModal(false) //закрываем модальное окно
-    
-            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-            alerts.push(`${Math.random()}_info_Пользователь изменен`)
-            setTimeout(() => alerts.pop(), 5000)
-    
-            return users //возвращаем обновленный список юзеров
         }
     }
 
@@ -241,13 +256,17 @@ const APITable = () => {
                                         <Button
                                             variant='info'
                                             onClick={() => showUpdateModal(user)}
-                                        >Редактировать</Button>
+                                        >
+                                            <img src={update_icon} alt="update_icon" />
+                                        </Button>
                                     </td>
                                     <td>
                                         <Button
                                             variant='danger'
                                             onClick={() => removeUser(user)}
-                                        >x</Button>
+                                        >
+                                            <img src={trash_icon} alt="trash_icon" />
+                                        </Button>
                                     </td>
                                 </tr>
                             )}
