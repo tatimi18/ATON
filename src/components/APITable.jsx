@@ -56,30 +56,35 @@ const APITable = () => {
         let currentItem = users.find(elem => elem.id === item.id) //ищем текущего пользователя в списке
         let updatedUser = {...currentItem} //делаем копию, чтобы заменить значения в ней и дальше по индексу поменять его с оригиналом в списке
 
-        Object.defineProperty(updatedUser, 'first_name', {
-            value: current_firstName,
-        });
-
-        Object.defineProperty(updatedUser, 'last_name', {
-            value: current_lastName,
-        });
-
-        Object.defineProperty(updatedUser, 'email', {
-            value: currentEmail,
-        });
-
-        let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
-
-        if (index !== -1) {
-            users[index] = updatedUser;
+        if (!current_firstName || !current_lastName || !currentEmail) { //если поля не заполнены форма не отправляется
+            setIsValid(false)
+        } else {
+            setIsValid(true)
+            Object.defineProperty(updatedUser, 'first_name', {
+                value: current_firstName,
+            });
+    
+            Object.defineProperty(updatedUser, 'last_name', {
+                value: current_lastName,
+            });
+    
+            Object.defineProperty(updatedUser, 'email', {
+                value: currentEmail,
+            });
+    
+            let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
+    
+            if (index !== -1) {
+                users[index] = updatedUser;
+            }
+            setShowUpdatingModal(false) //закрываем модальное окно
+    
+            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+            alerts.push(`${Math.random()}_info_Пользователь изменен`)
+            setTimeout(() => alerts.pop(), 5000)
+    
+            return users //возвращаем обновленный список юзеров
         }
-        setShowUpdatingModal(false) //закрываем модальное окно
-
-        //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-        alerts.push(`${Math.random()}_info_Пользователь изменен`)
-        setTimeout(() => alerts.pop(), 5000)
-
-        return users //возвращаем обновленный список юзеров
     }
 
 /* ======= ЛОГИКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
@@ -194,8 +199,8 @@ const APITable = () => {
             setIsLoading(false)
 
             //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-            alerts.unshift(`${Math.random()}_success_Данные получены за ${time} сек.`)
-            setTimeout(() => alerts.shift(), 5000)
+            alerts.push(`${Math.random()}_success_Данные получены за ${time} сек.`)
+            setTimeout(() => alerts.pop(), 5000)
         }
         fetchingUsers();
     }, [alerts, page]);
@@ -260,32 +265,48 @@ const APITable = () => {
                         title={'Измените данные'}
                         body={
                             <form className='modal__wrapper'>
-                                <label htmlFor="firstName">Имя</label>
-                                <input 
-                                    type='text' 
-                                    name='firstName' 
-                                    className='modal__input'
-                                    value={current_firstName} 
-                                    onChange={e => setCurrent_firstName(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="firstName">Имя</label>
+                                    <input 
+                                        type='text' 
+                                        name='firstName' 
+                                        className='signIn__input'
+                                        value={current_firstName} 
+                                        onChange={e => setCurrent_firstName(e.target.value)}
+                                    />
+                                </div>
 
-                                <label htmlFor="lastName">Фамилия</label>
-                                <input 
-                                    type='text' 
-                                    name='lastName' 
-                                    className='modal__input'
-                                    value={current_lastName} 
-                                    onChange={e => setCurrent_lastName(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="lastName">Фамилия</label>
+                                    <input 
+                                        type='text' 
+                                        name='lastName' 
+                                        className='signIn__input'
+                                        value={current_lastName} 
+                                        onChange={e => setCurrent_lastName(e.target.value)}
+                                    />
+                                </div>
 
-                                <label htmlFor="email">Электронная почта</label>
-                                <input 
-                                    type='text' 
-                                    name='email' 
-                                    value={currentEmail} 
-                                    className='modal__input'
-                                    onChange={e => setCurrentEmail(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="email">Электронная почта</label>
+                                    <input 
+                                        type='text' 
+                                        name='email' 
+                                        value={currentEmail} 
+                                        className='signIn__input'
+                                        onChange={e => setCurrentEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div 
+                                    className={
+                                        isValid === false
+                                        ? "signIn__error"
+                                        : "signIn__error__unvisible"
+                                    }
+                                >
+                                    <span className='signIn__invalid signIn__invalid__border'>x</span>
+                                    Заполните все поля
+                                </div>
                             </form>
                         }
                         action={() => updateUser(currentUser)}
@@ -296,46 +317,52 @@ const APITable = () => {
                         title={'Добавьте пользователя в список'}
                         body={
                             <form className='modal__wrapper'>
-                                
-                                <label htmlFor="firstName">Имя</label>
-                                <input 
-                                    required
-                                    type='text' 
-                                    name='firstName' 
-                                    className='modal__input'
-                                    placeholder='Введите имя'
-                                    value={addedFirstName || ''} 
-                                    onChange={e => setAddedFirstName(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="firstName">Имя</label>
+                                    <input 
+                                        required
+                                        type='text' 
+                                        name='firstName' 
+                                        className='signIn__input'
+                                        placeholder='Введите имя'
+                                        value={addedFirstName || ''} 
+                                        onChange={e => setAddedFirstName(e.target.value)}
+                                    />
+                                </div>
 
-                                <label htmlFor="lastName">Фамилия</label>
-                                <input 
-                                    required
-                                    type='text' 
-                                    name='lastName' 
-                                    className='modal__input'
-                                    placeholder='Введите фамилию'
-                                    value={addedLastName || ''} 
-                                    onChange={e => setAddedLastName(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="lastName">Фамилия</label>
+                                    <input 
+                                        required
+                                        type='text' 
+                                        name='lastName' 
+                                        className='signIn__input'
+                                        placeholder='Введите фамилию'
+                                        value={addedLastName || ''} 
+                                        onChange={e => setAddedLastName(e.target.value)}
+                                    />
+                                </div>
                                     
-                                <label htmlFor="email">Электронная почта</label>
-                                <input 
-                                    required
-                                    type='email' 
-                                    name='email' 
-                                    className='modal__input'
-                                    placeholder='Введите электронную почту'
-                                    value={addedEmail || ''} 
-                                    onChange={e => setAddedEmail(e.target.value)}
-                                />
+                                <div className='signIn__field'>
+                                    <label className='modal__label' htmlFor="email">Электронная почта</label>
+                                    <input 
+                                        required
+                                        type='email' 
+                                        name='email' 
+                                        className='signIn__input'
+                                        placeholder='Введите электронную почту'
+                                        value={addedEmail || ''} 
+                                        onChange={e => setAddedEmail(e.target.value)}
+                                    />
+                                </div>
                                 <div 
                                     className={
                                         isValid === false
-                                        ? "modal__error"
-                                        : "modal__error__unvisible"
+                                        ? "signIn__error"
+                                        : "signIn__error__unvisible"
                                     }
                                 >
+                                    <span className='signIn__invalid signIn__invalid__border'>x</span>
                                     Заполните все поля
                                 </div>
                             </form> 

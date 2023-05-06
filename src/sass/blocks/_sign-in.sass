@@ -1,7 +1,7 @@
 .signIn
     &__wrapper
         margin: 200px auto
-        background-color: #0d6efd
+        background-color: #95bfff
         padding: 40px
         max-width: 400px
         border-radius: 12%
@@ -9,10 +9,11 @@
         flex-direction: column
         align-items: center
     &__link
-        color: #9ac3ff
+        color: #0445A4
         cursor: pointer
         &:hover
             color: white
+            transition: 0.5s all
     &__field
         padding-bottom: 20px
         display: flex
@@ -22,7 +23,7 @@
         font-size: 20px
     &__input
         padding: 10px
-        width: 100%
+        min-width: 278px
     &__btn
         width: 100%
         height: 50px
@@ -30,5 +31,27 @@
     &__question
         text-align: center
         color: white
+    &__error
+        align-items: center
+        display: flex
+        color: red
+        &__unvisible
+            display: none
+    &__invalid
+        padding-bottom: 4px
+        margin-right: 10px
+        display: flex
+        justify-content: center
+        align-items: center
+        height: 20px
+        width: 20px
+        color: red
+        font-weight: 700
+        font-size: 17px
+        background-color: white
+        border-radius: 50%
+        &__border
+            border: 1.5px solid red
+        
 
 

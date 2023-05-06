@@ -76,7 +76,12 @@ const SignInPage = () => {
                             </FormField>
 
                             {/* выводим сообщение, если данные неверны */}
-                            {!isDataCorrect && <div>попробуйте другой логин/пароль</div>}
+                            {!isDataCorrect && 
+                                <p className='signIn__error'>
+                                    <span className='signIn__invalid'>x</span>
+                                    Неверный логин или пароль
+                                </p>
+                            }
 
                             <Button 
                                 type="submit" 
