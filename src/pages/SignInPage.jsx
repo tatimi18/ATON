@@ -1,11 +1,12 @@
 import React, {useContext, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Button, FormField } from 'semantic-ui-react';
+import { Form, FormField } from 'semantic-ui-react';
+import { Button } from 'react-bootstrap';
 import { authContext } from '../contexts/AuthContext';
 
 const SignInPage = () => {
     const navigate = useNavigate()
-
+    
     //достаем функцию изменения значения контекста с помощью хука
     const { setAuthData } = useContext(authContext)
 
@@ -15,7 +16,6 @@ const SignInPage = () => {
     
     //создаем состояние для дальнейшей проверки правильности введения данных
     //если не совпадут, то меняем значение на false
-    //
     const [isDataCorrect, setIsDataCorrect] = useState('default')
 
     function onFormSubmit(e) {
@@ -36,55 +36,63 @@ const SignInPage = () => {
     };
 
     return (
-        <div>
-            <h1 className="">Войти</h1>
-            <div>Еще нет аккаунта? Тогда нажмите <Link to='/sign-up'>Зарегистрироваться</Link></div>
-            <Form onSubmit={onFormSubmit}>
-                <Form.Group>
-                    
-                    <FormField>
-                        <label>Логин</label>
-                        <input
-                            required 
-                            type="text" 
-                            placeholder="Введите Ваш логин" 
-                            value={login}
-                            onChange={e => {
-                                setLogin(e.target.value);
-                            }}
-                            onFocus={(e) => {if (e.target.placeholder === 'Введите Ваш логин') {e.target.placeholder = ''}}} 
-                            onBlur={(e) => {if (e.target.placeholder === '') {e.target.placeholder = 'Введите Ваш логин'}}}
-                        />
-                    </FormField>
-                    
-                    <FormField>
-                        <label className="form__subtitle__grey">Пароль</label>
-                        <input 
-                            required 
-                            type="password" 
-                            value={password}
-                            onChange={e => {
-                                setPassword(e.target.value);
-                            }}
-                            placeholder="Введите пароль" 
-                            onFocus={(e) => {if (e.target.placeholder === 'Введите пароль') {e.target.placeholder = ''}}} 
-                            onBlur={(e) => {if (e.target.placeholder === '') {e.target.placeholder = 'Введите пароль'}}}
-                        />
-                    </FormField>
-
-                    {/* выводим сообщение, если данные неверны */}
-                    {!isDataCorrect && <div>попробуйте другой логин/пароль</div>}
-
-                    <Button 
-                        type="submit" 
-                        className="button__form"
-                    >
-                        Войти
-                    </Button>
+        <section className="signIn">
+            <div className='container'>
+                <div className="signIn__wrapper">
+                    <p className="title">Войти</p>
+                    <Form onSubmit={onFormSubmit}>
+                        <Form.Group>
                             
-                </Form.Group>
-			</Form>
-        </div>
+                            <FormField className='signIn__field'>
+                                <label className="signIn__label">Логин</label>
+                                <input
+                                    required 
+                                    className='signIn__input'
+                                    type="text" 
+                                    placeholder="Введите Ваш логин" 
+                                    value={login}
+                                    onChange={e => {
+                                        setLogin(e.target.value);
+                                    }}
+                                    onFocus={(e) => {if (e.target.placeholder === 'Введите Ваш логин') {e.target.placeholder = ''}}} 
+                                    onBlur={(e) => {if (e.target.placeholder === '') {e.target.placeholder = 'Введите Ваш логин'}}}
+                                />
+                            </FormField>
+                            
+                            <FormField className='signIn__field'>
+                                <label className="signIn__label">Пароль</label>
+                                <input  
+                                    required 
+                                    className='signIn__input'
+                                    type="password" 
+                                    value={password}
+                                    onChange={e => {
+                                        setPassword(e.target.value);
+                                    }}
+                                    placeholder="Введите пароль" 
+                                    onFocus={(e) => {if (e.target.placeholder === 'Введите пароль') {e.target.placeholder = ''}}} 
+                                    onBlur={(e) => {if (e.target.placeholder === '') {e.target.placeholder = 'Введите пароль'}}}
+                                />
+                            </FormField>
+
+                            {/* выводим сообщение, если данные неверны */}
+                            {!isDataCorrect && <div>попробуйте другой логин/пароль</div>}
+
+                            <Button 
+                                type="submit" 
+                                variant='dark'
+                                className="signIn__btn"
+                            >
+                                Войти
+                            </Button>
+                                    
+                        </Form.Group>
+                    </Form>
+                    <div className='signIn__question'>Еще нет аккаунта? Тогда нажмите <Link to='/sign-up' className='signIn__link'>Зарегистрироваться</Link></div>
+                </div>
+            </div>
+
+        </section>
     )
         
 };
