@@ -32,7 +32,7 @@ const PrivatePage = () => {
 
             {
                 auth.data
-                ? <div>
+                ? <div style={{position: 'relative'}}>
                         <Navbar fixed="top" bg="dark" variant="dark">
                             <Container>
                                 <Navbar.Brand>
