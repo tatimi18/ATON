@@ -233,51 +233,57 @@ const APITable = () => {
                     >   
                         Добавить в список
                     </Button>
-                    <Table responsive striped bordered hover>
-                        <thead className='head-fixed'>
-                            <tr className='table__tr table__tr__head'>
-                                <th className='table__th table__th__id-head'>id</th>
-                                <th className='table__th'>Имя</th>
-                                <th className='table__th'>Фамилия</th>
-                                <th className='table__th'>Электронная почта</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className='table__tr'>
-                                <th style={{height: '114px'}}></th>
-                            </tr>
-                            {users.map(user => 
-                                <tr className='table__tr' key={user.id}>
-                                    <td className='table__th table__th__id'>{user.id}</td>
-                                    <td>{user.first_name}</td>
-                                    <td>{user.last_name}</td>
-                                    <td>{user.email}</td>
-                                    <td>
-                                        <Button
-                                            variant='info'
-                                            onClick={() => showUpdateModal(user)}
-                                        >
-                                            <img src={update_icon} alt="update_icon" />
-                                        </Button>
-                                    </td>
-                                    <td>
-                                        <Button
-                                            variant='danger'
-                                            onClick={() => removeUser(user)}
-                                        >
-                                            <img src={trash_icon} alt="trash_icon" />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            )}
-                            
-                        </tbody>
-                    </Table>
+
                     <MyPagination 
                         totalPages={totalPages} 
                         page={page}
                         changePage={changePage}
                     />
+
+                    <div className="scroll-table">
+                        <Table responsive striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>Имя</th>
+                                    <th>Фамилия</th>
+                                    <th>Эл. почта</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </Table>
+                        <div className="scroll-table-body">
+                            <Table responsive striped bordered hover>
+                                <tbody>
+                                    {users.map(user => 
+                                        <tr key={user.id}>
+                                            <td>{user.id}</td>
+                                            <td>{user.first_name}</td>
+                                            <td>{user.last_name}</td>
+                                            <td>{user.email}</td>
+                                            <td>
+                                                <Button
+                                                    variant='info'
+                                                    style={{marginRight: '10px'}}
+                                                    onClick={() => showUpdateModal(user)}
+                                                >
+                                                    <img src={update_icon} alt="update_icon" />
+                                                </Button>
+                                                <Button
+                                                    variant='danger'
+                                                    onClick={() => removeUser(user)}
+                                                >
+                                                    <img src={trash_icon} alt="trash_icon" />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    )}
+                                    
+                                </tbody>
+                            </Table>
+                        </div>
+                    </div>
+                    
                     <MyModal
                         show={showUpdatingModal}
                         handleClose={() => setShowUpdatingModal(false)}
