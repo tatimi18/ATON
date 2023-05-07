@@ -60,19 +60,19 @@ const APITable = () => {
 
         if (!current_firstName || !current_lastName || !currentEmail) { //если поля не заполнены форма не отправляется
             setIsValid(false)
-        } else {
+        } else { //если поля не изменились возвращаем исходник
             if (currentItem.first_name === current_firstName && 
                 currentItem.last_name === current_lastName && 
                 currentItem.email === currentEmail) {
-                    
+
                     setShowUpdatingModal(false) //закрываем модальное окно
                     
                     //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
                     alerts.push(`${Math.random()}_secondary_Данные остались прежними`)
                     setTimeout(() => alerts.pop(), 5000)
         
-                    return users //возвращаем обновленный список юзеров
-            } else {
+                    return users //возвращаем исходник
+            } else { //если изменились, то меняем данные
                 setIsValid(true)
                 Object.defineProperty(updatedUser, 'first_name', {
                     value: current_firstName,
@@ -224,7 +224,7 @@ const APITable = () => {
         <div className='container'>
             {
                 isLoading
-                ? <Spinner animation="border" variant="primary" />
+                ? <Spinner className='spinner' animation="border" variant="primary" />
                 : <>
                     <Button 
                         style={{marginTop: '70px'}}
