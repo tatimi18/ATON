@@ -16,6 +16,7 @@ const APITable = () => {
     const [users, setUsers] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [lastUserInPage, setLastUserInPage] = useState(0);
+    const [perPage, setPerPage] = useState(0)
 
     //cостояния для работы с модальным окном изменения пользователя
     const [showUpdatingModal, setShowUpdatingModal] = useState(false);
@@ -112,21 +113,25 @@ const APITable = () => {
         if (filteredUsers.length !== 0) {
             //обновляем список юзеров
             setUsers(filteredUsers)
-    
+
             //перезаписываем id последнего пользователя в фильтрованном списке
             setLastUserInPage(lastUserInList.id)
 
-            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-            alerts.push(`${Math.random()}_danger_Пользователь удален`)
-            setTimeout(() => alerts.pop(), 5200)
-            
-        } else {
-            if (page > 1) {
+        } else if (!filteredUsers.length && page === 1) {
+            setUsers([])
+            setLastUserInPage(1)
+            /* if (page > 1) {
                 setPage(page - 1)
             } else {
                 setPage(1)
-            }
+            } */
+        } else if (!filteredUsers.length && page !== 1) {
+            setUsers([])
+            setLastUserInPage((page - 1) * perPage)
         }
+        //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+        alerts.push(`${Math.random()}_danger_Пользователь удален`)
+        setTimeout(() => alerts.pop(), 5200)
     }
 
 /* ======= ЛОГИКА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
@@ -200,10 +205,11 @@ const APITable = () => {
             try {
                 start = Date.now() //начало отсчета времени загрузки данных
                 setIsLoading(true)
-                let response = await fetch(`https://reqres.in/api/users?page=${page}&per_page=6`)
+                let response = await fetch(`https://reqres.in/api/users?page=${page}&per_page=${perPage}`)
                 let json = await response.json();
                 setUsers(json.data)
                 setTotalPages(json.total_pages)
+                setPerPage(json.per_page)
                 setLastUserInPage(json.per_page * page)
                 
             } catch (error) {
@@ -241,47 +247,52 @@ const APITable = () => {
                     />
 
                     <div className="scroll-table">
-                        <Table responsive striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>id</th>
-                                    <th>Имя</th>
-                                    <th>Фамилия</th>
-                                    <th>Эл. почта</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </Table>
-                        <div className="scroll-table-body">
-                            <Table responsive striped bordered hover>
-                                <tbody>
-                                    {users.map(user => 
-                                        <tr key={user.id}>
-                                            <td>{user.id}</td>
-                                            <td>{user.first_name}</td>
-                                            <td>{user.last_name}</td>
-                                            <td>{user.email}</td>
-                                            <td>
-                                                <Button
-                                                    variant='info'
-                                                    style={{marginRight: '10px'}}
-                                                    onClick={() => showUpdateModal(user)}
-                                                >
-                                                    <img src={update_icon} alt="update_icon" />
-                                                </Button>
-                                                <Button
-                                                    variant='danger'
-                                                    onClick={() => removeUser(user)}
-                                                >
-                                                    <img src={trash_icon} alt="trash_icon" />
-                                                </Button>
-                                            </td>
+                        {!users.length
+                            ? <div className='table__empty'>На странице {page} теперь пусто</div>
+                            : <>
+                                <Table responsive striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>Имя</th>
+                                            <th>Фамилия</th>
+                                            <th>Эл. почта</th>
+                                            <th></th>
                                         </tr>
-                                    )}
-                                    
-                                </tbody>
-                            </Table>
-                        </div>
+                                    </thead>
+                                </Table>
+                                <div className="scroll-table-body">
+                                    <Table responsive striped bordered hover>
+                                        <tbody>
+                                            {users.map(user => 
+                                                <tr key={user.id}>
+                                                    <td>{user.id}</td>
+                                                    <td>{user.first_name}</td>
+                                                    <td>{user.last_name}</td>
+                                                    <td>{user.email}</td>
+                                                    <td>
+                                                        <Button
+                                                            variant='info'
+                                                            style={{marginRight: '10px'}}
+                                                            onClick={() => showUpdateModal(user)}
+                                                        >
+                                                            <img src={update_icon} alt="update_icon" />
+                                                        </Button>
+                                                        <Button
+                                                            variant='danger'
+                                                            onClick={() => removeUser(user)}
+                                                        >
+                                                            <img src={trash_icon} alt="trash_icon" />
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            </>
+                        }
                     </div>
                     
                     <MyModal
