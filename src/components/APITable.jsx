@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import Table from 'react-bootstrap/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import MyPagination from './MyPagination';
 import { Button } from 'react-bootstrap';
 import MyModal from '../components/MyModal';
 import MyAlert from './MyAlert';
-import trash_icon from '../icons/trash_icon.svg'
-import update_icon from '../icons/update_icon.svg'
+import MyTable from './MyTable';
+import AddingModalForm from './UI/modalForms/AddingModalForm';
+import UpdatingModalForm from './UI/modalForms/UpdatingModalForm';
+
 
 const APITable = () => {
 
@@ -43,161 +44,7 @@ const APITable = () => {
         setPage(page)
     }
 
-/* ======= ЛОГИКА ИЗМЕНЕНИЯ ДАННЫХ ПОЛЬЗОВАТЕЛЯ ========================================================= */
-
-    //открывает модальное окно для внесения изменений, добавляет в инпуты значения текущего пользователя
-    function showUpdateModal(userToUpdate) {
-        setShowUpdatingModal(true)
-        setCurrentUser(userToUpdate)
-        setCurrent_firstName(userToUpdate.first_name)
-        setCurrent_lastName(userToUpdate.last_name)
-        setCurrentEmail(userToUpdate.email)
-    }
-
-    //обновляет выбранного пользователя
-    function updateUser(item) {
-        let currentItem = users.find(elem => elem.id === item.id) //ищем текущего пользователя в списке
-        let updatedUser = {...currentItem} //делаем копию, чтобы заменить значения в ней и дальше по индексу поменять его с оригиналом в списке
-
-        if (!current_firstName || !current_lastName || !currentEmail) { //если поля не заполнены форма не отправляется
-            setIsValid(false)
-        } else { //если поля не изменились возвращаем исходник
-            if (currentItem.first_name === current_firstName && 
-                currentItem.last_name === current_lastName && 
-                currentItem.email === currentEmail) {
-
-                    setShowUpdatingModal(false) //закрываем модальное окно
-                    
-                    //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-                    alerts.push(`${Math.random()}_secondary_Данные остались прежними`)
-                    setTimeout(() => alerts.pop(), 5000)
-        
-                    return users //возвращаем исходник
-            } else { //если изменились, то меняем данные
-                setIsValid(true)
-                Object.defineProperty(updatedUser, 'first_name', {
-                    value: current_firstName,
-                });
-        
-                Object.defineProperty(updatedUser, 'last_name', {
-                    value: current_lastName,
-                });
-        
-                Object.defineProperty(updatedUser, 'email', {
-                    value: currentEmail,
-                });
-        
-                let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
-        
-                if (index !== -1) {
-                    users[index] = updatedUser;
-                }
-                setShowUpdatingModal(false) //закрываем модальное окно
-        
-                //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-                alerts.push(`${Math.random()}_info_Пользователь изменен`)
-                setTimeout(() => alerts.pop(), 5000)
-        
-                return users //возвращаем обновленный список юзеров
-            }
-        }
-    }
-
-/* ======= ЛОГИКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
-
-    //удаление пользователя из списка
-    function removeUser(userToRemove) {
-        let filteredUsers = users.filter(user => user.id !== userToRemove.id)
-        let lastUserInList = filteredUsers[filteredUsers.length - 1]
-        
-        if (filteredUsers.length !== 0) {
-            //обновляем список юзеров
-            setUsers(filteredUsers)
-
-            //перезаписываем id последнего пользователя в фильтрованном списке
-            setLastUserInPage(lastUserInList.id)
-
-        } else if (!filteredUsers.length && page === 1) {
-            setUsers([])
-            setLastUserInPage(1)
-            /* if (page > 1) {
-                setPage(page - 1)
-            } else {
-                setPage(1)
-            } */
-        } else if (!filteredUsers.length && page !== 1) {
-            setUsers([])
-            setLastUserInPage((page - 1) * perPage)
-        }
-        //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-        alerts.push(`${Math.random()}_danger_Пользователь удален`)
-        setTimeout(() => alerts.pop(), 5200)
-    }
-
-/* ======= ЛОГИКА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
-
-    //добавляет нового пользователя
-    function addNewUser(firstName, lastName, email) {
-        if (!firstName || !lastName || !email) { //если поля не заполнены форма не отправляется
-            setIsValid(false)
-        } else {
-            setIsValid(true)
-            users.push({
-                id: lastUserInPage + 1,
-                first_name: firstName,
-                last_name: lastName,
-                email: email
-            })
-
-            //обновляем состояние индекса последнего пользователя на странице
-            setLastUserInPage(lastUserInPage + 1)
-
-            for (let user of users) {
-                //переприсваиваем индексы начиная с lastUserInPage + 1
-                if (user.id === lastUserInPage + 1) {
-                    for (let i = lastUserInPage + 2; i <= users.length; i += 1) {
-                        user.id += 1
-                    }
-                }
-            }
-            //стираем заполненные поля
-            setAddedFirstName()
-            setAddedLastName()
-            setAddedEmail()
-    
-            // закрываем модальное окно
-            setShowAddingModal(false)
-
-            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-            alerts.push(`${Math.random()}_primary_Пользователь добавлен`)
-            setTimeout(() => alerts.pop(), 5000)
-
-        }
-    }
-
-    //функция при закрытии модального окна добавления пользователя, сбрасыват все изменения формы, если она не отправлена
-    function handleClose() {
-        //стираем заполненные поля 
-        setAddedFirstName()
-        setAddedLastName()
-        setAddedEmail()
-
-        //скрываем валидацию
-        setIsValid('default')
-
-        // закрываем модальное окно
-        setShowAddingModal(false)
-    }
-
-    /* ======= УДАЛЕНИЕ АЛЕРТА ИЗ СПИСКА ========================================================= */
-
-    function removeAlert(alertToRemove) {
-        const id = alertToRemove.split('_'[0])
-        alerts.filter(alert => alert.split('_'[0]) !== id)
-        //setAlerts(filteredAlerts)
-    }
-
-    /* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
+      /* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
 
     useEffect(() => {
         let start;
@@ -219,12 +66,145 @@ const APITable = () => {
             const time = (end - start) / 1000
             setIsLoading(false)
 
-            //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
-            alerts.push(`${Math.random()}_success_Данные получены за ${time} сек.`)
-            setTimeout(() => alerts.pop(), 5000)
+            addNewAlert(`_success_Данные получены за ${time} сек.`) //добавляем новое уведомление 
         }
         fetchingUsers();
     }, [alerts, page]);
+
+/* ======= ЛОГИКА УВЕДОМЛЕНИЙ ========================================================= */
+
+//добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
+function addNewAlert(message) {
+    alerts.push(Math.random() + message)
+    setTimeout(() => alerts.pop(), 5000)
+}
+
+//удаление уведомления
+function removeAlert(alertToRemove) {
+    const id = alertToRemove.split('_'[0])
+    alerts.filter(alert => alert.split('_'[0]) !== id)
+}
+
+/* ======= ЛОГИКА ИЗМЕНЕНИЯ ДАННЫХ ПОЛЬЗОВАТЕЛЯ ========================================================= */
+
+    //открывает модальное окно для внесения изменений, добавляет в инпуты значения текущего пользователя
+    function showUpdateModal(userToUpdate) {
+        setShowUpdatingModal(true)
+        setCurrentUser(userToUpdate)
+        setCurrent_firstName(userToUpdate.first_name)
+        setCurrent_lastName(userToUpdate.last_name)
+        setCurrentEmail(userToUpdate.email)
+    }
+
+    //обновляет выбранного пользователя
+    function updateUser(item) {
+        let currentItem = users.find(elem => elem.id === item.id) //ищем текущего пользователя в списке
+        let updatedUser = {...currentItem} //делаем копию, чтобы заменить значения в ней и дальше по индексу поменять его с оригиналом в списке
+
+        if (!current_firstName || !current_lastName || !currentEmail) { //если поля не заполнены форма не отправляется и выскакивает уведомление
+            setIsValid(false)
+        } else { //если поля не изменились возвращаем исходник
+            if (currentItem.first_name === current_firstName && 
+                currentItem.last_name === current_lastName && 
+                currentItem.email === currentEmail) {
+
+                    setShowUpdatingModal(false) //закрываем модальное окно
+                    addNewAlert('_secondary_Данные остались прежними') //добавляем новое уведомление 
+                    return users //возвращаем исходник
+
+            } else { //если изменились, то меняем данные
+
+                setIsValid(true)
+                Object.defineProperty(updatedUser, 'first_name', {
+                    value: current_firstName,
+                });
+        
+                Object.defineProperty(updatedUser, 'last_name', {
+                    value: current_lastName,
+                });
+        
+                Object.defineProperty(updatedUser, 'email', {
+                    value: currentEmail,
+                });
+        
+                let index = users.indexOf(currentItem); //ищем индекс найденного юзера, если существует, то меняем по этому индексу найденного юзера на измененный
+        
+                if (index !== -1) {
+                    users[index] = updatedUser;
+                }
+                setShowUpdatingModal(false) //закрываем модальное окно
+                addNewAlert('_info_Пользователь изменен') //добавляем новое уведомление 
+
+                return users //возвращаем обновленный список юзеров
+            }
+        }
+    }
+
+/* ======= ЛОГИКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
+
+    //удаление пользователя из списка
+    function removeUser(userToRemove) {
+        let filteredUsers = users.filter(user => user.id !== userToRemove.id)
+        let lastUserInList = filteredUsers[filteredUsers.length - 1]
+        
+        if (filteredUsers.length !== 0) {
+            //обновляем список юзеров
+            setUsers(filteredUsers)
+
+            //перезаписываем id последнего пользователя в фильтрованном списке
+            setLastUserInPage(lastUserInList.id)
+
+        } else if (!filteredUsers.length && page === 1) {
+            setUsers([])
+            setLastUserInPage(0)
+        } else if (!filteredUsers.length && page !== 1) {
+            setUsers([])
+            setLastUserInPage((page - 1) * perPage)
+        }
+        //добавляем новое уведомление
+        addNewAlert('_danger_Пользователь удален')
+    }
+
+/* ======= ЛОГИКА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ ========================================================= */
+
+    //добавляет нового пользователя
+    function addNewUser(firstName, lastName, email) {
+        if (!firstName || !lastName || !email) { //если поля не заполнены форма не отправляется
+            setIsValid(false)
+        } else {
+            setIsValid(true)
+            const newUser = {
+                id: lastUserInPage + 1,
+                first_name: firstName,
+                last_name: lastName,
+                email: email
+            }
+            setUsers([...users, newUser])
+
+            //обновляем состояние индекса последнего пользователя на странице
+            setLastUserInPage(lastUserInPage + 1)
+
+            //стираем заполненные поля и закрываем форму
+            handleClose()
+
+            //добавляем новое уведомление
+            addNewAlert('_primary_Пользователь добавлен')
+        }
+    }
+
+    //функция при закрытии модального окна добавления пользователя, сбрасыват все изменения формы, если она не отправлена и при отправлении формы
+    function handleClose() {
+        //стираем заполненные поля 
+        setAddedFirstName('')
+        setAddedLastName('')
+        setAddedEmail('')
+
+        //скрываем валидацию
+        setIsValid('default')
+
+        // закрываем модальное окно
+        setShowAddingModal(false)
+    }
 
     return (
         <div className='container'>
@@ -232,6 +212,40 @@ const APITable = () => {
                 isLoading
                 ? <Spinner className='spinner' animation="border" variant="primary" />
                 : <>
+                    <MyModal
+                        show={showUpdatingModal}
+                        handleClose={() => setShowUpdatingModal(false)}
+                        title={'Измените данные'}
+                        body={
+                            <UpdatingModalForm
+                                current_firstName={current_firstName}
+                                updateCurrent__firstName={setCurrent_firstName}
+                                current_lastName={current_lastName}
+                                updateCurrent_lastName={setCurrent_lastName}
+                                current_email={currentEmail}
+                                updateCurrent_email={setCurrentEmail}
+                                isValid={isValid}
+                            />
+                        }
+                        action={() => updateUser(currentUser)}
+                    />
+                    <MyModal
+                        show={showAddingModal}
+                        handleClose={handleClose}
+                        title={'Добавьте пользователя в список'}
+                        body={
+                            <AddingModalForm
+                                _firstName={addedFirstName}
+                                add__firstName={setAddedFirstName}
+                                _lastName={addedLastName}
+                                add_lastName={setAddedLastName}
+                                _email={addedEmail}
+                                add_email={setAddedEmail}
+                                isValid={isValid}
+                            />
+                        }
+                        action={() => addNewUser(addedFirstName, addedLastName, addedEmail)}    
+                    />
                     <Button 
                         style={{marginTop: '70px'}}
                         onClick={() => setShowAddingModal(true)}
@@ -248,166 +262,16 @@ const APITable = () => {
 
                     <div className="scroll-table">
                         {!users.length
-                            ? <div className='table__empty'>На странице {page} теперь пусто</div>
-                            : <>
-                                <Table responsive striped bordered hover>
-                                    <thead>
-                                        <tr>
-                                            <th>id</th>
-                                            <th>Имя</th>
-                                            <th>Фамилия</th>
-                                            <th>Эл. почта</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                </Table>
-                                <div className="scroll-table-body">
-                                    <Table responsive striped bordered hover>
-                                        <tbody>
-                                            {users.map(user => 
-                                                <tr key={user.id}>
-                                                    <td>{user.id}</td>
-                                                    <td>{user.first_name}</td>
-                                                    <td>{user.last_name}</td>
-                                                    <td>{user.email}</td>
-                                                    <td>
-                                                        <Button
-                                                            variant='info'
-                                                            style={{marginRight: '10px'}}
-                                                            onClick={() => showUpdateModal(user)}
-                                                        >
-                                                            <img src={update_icon} alt="update_icon" />
-                                                        </Button>
-                                                        <Button
-                                                            variant='danger'
-                                                            onClick={() => removeUser(user)}
-                                                        >
-                                                            <img src={trash_icon} alt="trash_icon" />
-                                                        </Button>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                            
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            </>
+                            ? <div className='table__empty'>На странице {page} пусто</div>
+                            : <MyTable
+                                parentToRender={users}
+                                showModal={showUpdateModal}
+                                remove={removeUser}
+                            />
                         }
                     </div>
-                    
-                    <MyModal
-                        show={showUpdatingModal}
-                        handleClose={() => setShowUpdatingModal(false)}
-                        title={'Измените данные'}
-                        body={
-                            <form className='modal__wrapper'>
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="firstName">Имя</label>
-                                    <input 
-                                        type='text' 
-                                        name='firstName' 
-                                        className='signIn__input'
-                                        value={current_firstName} 
-                                        onChange={e => setCurrent_firstName(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="lastName">Фамилия</label>
-                                    <input 
-                                        type='text' 
-                                        name='lastName' 
-                                        className='signIn__input'
-                                        value={current_lastName} 
-                                        onChange={e => setCurrent_lastName(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="email">Электронная почта</label>
-                                    <input 
-                                        type='text' 
-                                        name='email' 
-                                        value={currentEmail} 
-                                        className='signIn__input'
-                                        onChange={e => setCurrentEmail(e.target.value)}
-                                    />
-                                </div>
-                                <div 
-                                    className={
-                                        isValid === false
-                                        ? "signIn__error"
-                                        : "signIn__error__unvisible"
-                                    }
-                                >
-                                    <span className='signIn__invalid signIn__invalid__border'>x</span>
-                                    Заполните все поля
-                                </div>
-                            </form>
-                        }
-                        action={() => updateUser(currentUser)}
-                    />
-                    <MyModal
-                        show={showAddingModal}
-                        handleClose={handleClose}
-                        title={'Добавьте пользователя в список'}
-                        body={
-                            <form className='modal__wrapper'>
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="firstName">Имя</label>
-                                    <input 
-                                        required
-                                        type='text' 
-                                        name='firstName' 
-                                        className='signIn__input'
-                                        placeholder='Введите имя'
-                                        value={addedFirstName || ''} 
-                                        onChange={e => setAddedFirstName(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="lastName">Фамилия</label>
-                                    <input 
-                                        required
-                                        type='text' 
-                                        name='lastName' 
-                                        className='signIn__input'
-                                        placeholder='Введите фамилию'
-                                        value={addedLastName || ''} 
-                                        onChange={e => setAddedLastName(e.target.value)}
-                                    />
-                                </div>
-                                    
-                                <div className='signIn__field'>
-                                    <label className='modal__label' htmlFor="email">Электронная почта</label>
-                                    <input 
-                                        required
-                                        type='email' 
-                                        name='email' 
-                                        className='signIn__input'
-                                        placeholder='Введите электронную почту'
-                                        value={addedEmail || ''} 
-                                        onChange={e => setAddedEmail(e.target.value)}
-                                    />
-                                </div>
-                                <div 
-                                    className={
-                                        isValid === false
-                                        ? "signIn__error"
-                                        : "signIn__error__unvisible"
-                                    }
-                                >
-                                    <span className='signIn__invalid signIn__invalid__border'>x</span>
-                                    Заполните все поля
-                                </div>
-                            </form> 
-                        }
-                        action={() => addNewUser(addedFirstName, addedLastName, addedEmail)}    
-                    />
 
                     <div className='alerts__wrapper'>
-
                         {alerts.reverse().map(alert => 
                             <MyAlert 
                                 key={alert.split('_')[0]} 
@@ -417,10 +281,8 @@ const APITable = () => {
                             />
                         )}
                     </div>
-                    
                 </>
             }
-            
         </div>
     )
 }
