@@ -1,10 +1,9 @@
 .container
     margin: 0 auto
-    //padding: 12.866667rem 2.6667rem 5.3333rem 2.6667rem
     max-width: 1182px      
 
 .alerts__wrapper
-    position: absolute
+    position: fixed
     top: 100px
     left: 20px
 
@@ -17,6 +16,26 @@
 .spinner
     display: block
     margin: 250px auto 0
+
+.fixed-block
+    position: fixed
+    background-color: white
+    width: 63.5%
+    //width: 100%
+    max-width: inherit
+    @media (max-width: 1473px)
+        width: 78.5%
+    @media (max-width: 1440px)
+        width: 80.5%
+    @media (max-width: 1024px)
+        width: 97.5%
+    @media (max-width: 846px)
+        width: 97%
+    @media (max-width: 570px)
+        width: 96%
+    @media (max-width: 425px)
+        width: 94%
+
 
 @import 'blocks/pagination'
 @import 'blocks/navbar'

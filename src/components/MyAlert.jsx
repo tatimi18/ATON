@@ -3,7 +3,7 @@ import { Alert } from 'react-bootstrap'
 
 const MyAlert = ({text, variant, onClick}) => {
     const [show, setShow] = useState(true)
-    setTimeout(() => setShow(false), 5000)
+    setTimeout(() => setShow(false), 2500)
     return (
         <Alert 
             onClose={() => setShow(false)}

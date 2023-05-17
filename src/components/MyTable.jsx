@@ -7,7 +7,7 @@ import { Button } from 'react-bootstrap';
 const MyTable = ({parentToRender, showModal, remove}) => {
     return (
         <>
-            <Table responsive striped bordered hover>
+            {/* <Table responsive striped bordered hover style={{marginTop: '153px', position: 'fixed', width: '100%', maxWidth: 'inherit'}}>
                 <thead>
                     <tr>
                         <th>id</th>
@@ -17,7 +17,7 @@ const MyTable = ({parentToRender, showModal, remove}) => {
                         <th></th>
                     </tr>
                 </thead>
-            </Table>
+            </Table> */}
             <div className="scroll-table-body">
                 <Table responsive striped bordered hover>
                     <tbody>
