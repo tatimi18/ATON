@@ -3,7 +3,7 @@
 ### Описание
 
 <p align="center">
-  <img src="src/demo/signin-signup.gif" width="80%">
+  <img src="src/demo/signin-signup.gif" width="100%">
 </p>
 
 1. Пользователь первоначально находится на странице входа, где он может авторизоваться, если его данные есть в localStorage или перейти на страницу регистрации, где может внести свои данные (они сохоанятся в localStorage) и попытаться войти снова. Если данные не совпадут, высветится соответствующее сообщение
@@ -35,24 +35,24 @@
 ### Запуск проекта
 <p>Из терминала</p>
 
-## `npm start`
+# `npm start`
 
 ## или
 
 <p>Docker</p>
 
-# создать образ по инструкции из Dockerfile
-## `docker build -t image-name .`
+1. создать образ по инструкции из Dockerfile
+# `docker build -t image-name .`
 
-# запустить контейнер по образу image-name
-## `docker run -d -p 3000:3000 --name container-name image-name`
+2. запустить контейнер по образу image-name
+# `docker run -d -p 3000:3000 --name container-name image-name`
 
-# открыть http://localhost:3000
+3. открыть http://localhost:3000
 <!-- # `посмотреть список работающих контейнеров`
 ### `docker ps` -->
 
 <!-- # `посмотреть список всех контейнеров`
 ### `docker ps -a` -->
 
-# остановить контейнер
-## `docker stop container-name`
+4. остановить контейнер
+# `docker stop container-name`
