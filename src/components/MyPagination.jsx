@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 
 const MyPagination = ({totalPages, page, changePage}) => {
     let active = page;
-    let pagesCount = totalPages
+    let pagesCount = totalPages;
 
     let result = [];
     for (let i = 0; i < pagesCount; i += 1) {
@@ -22,7 +22,7 @@ const MyPagination = ({totalPages, page, changePage}) => {
             )}
 
 		</div>
-    )
-}
+    );
+};
 
-export default MyPagination
+export default MyPagination;

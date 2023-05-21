@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import perso_icon from '../icons/user_main.svg'
 import { Button } from "react-bootstrap";
 import Container from 'react-bootstrap/Container';
@@ -25,7 +25,7 @@ const MyNavbar = ({username, onLogOut}) => {
                 </Nav>
             </Container>
         </Navbar>
-    )
-}
+    );
+};
 
-export default MyNavbar
+export default MyNavbar;

@@ -7,8 +7,8 @@ export default class UserService {
                 page: page,
                 per_page: perPage
             }
-        })
-        const end = Date.now() 
+        });
+        const end = Date.now() ;
         return [response, end];
-    }
-}
+    };
+};

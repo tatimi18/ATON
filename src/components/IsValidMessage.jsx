@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const IsValidMessage = ({message, isValid}) => {
     return (
@@ -12,7 +12,7 @@ const IsValidMessage = ({message, isValid}) => {
             <span className='signIn__invalid signIn__invalid__border'>x</span>
             {message}
         </div>
-    )
-}
+    );
+};
 
-export default IsValidMessage
+export default IsValidMessage;

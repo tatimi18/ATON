@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignInPage from "./pages/SignInPage";
-import SignUpPage from './pages/SignUpPage'
+import SignUpPage from './pages/SignUpPage';
 import PrivatePage from "./pages/PrivatePage";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './sass/style.min.css'
+import './sass/style.min.css';
 import { Navigate } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage";
 
@@ -20,6 +20,6 @@ function App() {
 			</Routes>
 		</BrowserRouter>
 	);
-}
+};
 
 export default App;

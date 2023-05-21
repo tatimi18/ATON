@@ -18,9 +18,9 @@ const PrivatePage = () => {
 
     if (loading) {
         return (
-          <p>Loading</p>
+            <p>Loading</p>
         );
-    }
+    };
 
     return (
         <div>
@@ -34,7 +34,7 @@ const PrivatePage = () => {
                 : <Navigate to="/" />
             }
         </div>
-    )
-}
+    );
+};
 
-export default PrivatePage
+export default PrivatePage;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Alert from 'react-bootstrap/Alert';
 
 const ErrorPage = () => {
@@ -12,7 +12,7 @@ const ErrorPage = () => {
                 Перейдите на <Alert.Link href="/content">основную страницу</Alert.Link>
             </Alert>
         </div>
-    )
-}
+    );
+};
 
-export default ErrorPage
+export default ErrorPage;

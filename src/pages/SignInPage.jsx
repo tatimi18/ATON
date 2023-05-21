@@ -1,14 +1,14 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, FormField } from 'semantic-ui-react';
 import { Button } from 'react-bootstrap';
 import { authContext } from '../contexts/AuthContext';
 
 const SignInPage = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     
     //достаем функцию изменения значения контекста с помощью хука
-    const { setAuthData } = useContext(authContext)
+    const { setAuthData } = useContext(authContext);
 
     //создаем состояния для логина и пароля по умолчанию они пусты, при изменении значений они будут обновлены при помощи set...
     const [login, setLogin] = useState('');
@@ -16,23 +16,23 @@ const SignInPage = () => {
     
     //создаем состояние для дальнейшей проверки правильности введения данных
     //если не совпадут, то меняем значение на false
-    const [isDataCorrect, setIsDataCorrect] = useState('default')
+    const [isDataCorrect, setIsDataCorrect] = useState('default');
 
     function onFormSubmit(e) {
         e.preventDefault(); //отменяем действия браузера по умолчанию
         //проверяем, совпадает ли введенный пароль с паролем в localStorage для введенного логина
         if (localStorage.getItem(login) === password) {
             //удаляем заполненные поля при успешной авторизации
-            setLogin('')
-            setPassword('')
+            setLogin('');
+            setPassword('');
             //добавляем логин пользователя в контекст
-            setAuthData(login) 
+            setAuthData(login) ;
             //перенаправляем на страницу с контентом
-            navigate("/content", { replace: true })
+            navigate("/content", { replace: true });
         } else {
             //меняем состояние проверки на false
-            setIsDataCorrect(false) 
-        }
+            setIsDataCorrect(false) ;
+        };
     };
 
     return (
@@ -98,8 +98,7 @@ const SignInPage = () => {
             </div>
 
         </section>
-    )
-        
+    );
 };
 
-export default SignInPage
+export default SignInPage;

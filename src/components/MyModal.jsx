@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
@@ -21,7 +21,7 @@ const MyModal = ({show, handleClose, title, body, action}) => {
                 </Modal.Footer>
             </Modal>
         </>
-    )
-}
+    );
+};
 
-export default MyModal
+export default MyModal;

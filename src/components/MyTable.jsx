@@ -1,23 +1,12 @@
-import React from 'react'
-import trash_icon from '../icons/trash_icon.svg'
-import update_icon from '../icons/update_icon.svg'
+import React from 'react';
+import trash_icon from '../icons/trash_icon.svg';
+import update_icon from '../icons/update_icon.svg';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
 
 const MyTable = ({parentToRender, showModal, remove}) => {
     return (
         <>
-            {/* <Table responsive striped bordered hover style={{marginTop: '153px', position: 'fixed', width: '100%', maxWidth: 'inherit'}}>
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>Имя</th>
-                        <th>Фамилия</th>
-                        <th>Эл. почта</th>
-                        <th></th>
-                    </tr>
-                </thead>
-            </Table> */}
             <div className="scroll-table-body">
                 <Table responsive striped bordered hover>
                     <tbody>
@@ -43,13 +32,12 @@ const MyTable = ({parentToRender, showModal, remove}) => {
                                     </Button>
                                 </td>
                             </tr>
-                        )}
-                        
+                        )} 
                     </tbody>
                 </Table>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default MyTable
+export default MyTable;

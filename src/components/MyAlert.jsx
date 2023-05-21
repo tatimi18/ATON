@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { Alert } from 'react-bootstrap'
+import React, { useState } from 'react';
+import { Alert } from 'react-bootstrap';
 
 const MyAlert = ({text, variant, onClick}) => {
-    const [show, setShow] = useState(true)
-    setTimeout(() => setShow(false), 2500)
+    const [show, setShow] = useState(true);
+    setTimeout(() => setShow(false), 2500);
     return (
         <Alert 
             onClose={() => setShow(false)}
@@ -14,7 +14,7 @@ const MyAlert = ({text, variant, onClick}) => {
         >
             {text}
         </Alert>
-    )
-}
+    );
+};
 
-export default MyAlert
+export default MyAlert;

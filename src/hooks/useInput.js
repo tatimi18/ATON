@@ -8,11 +8,11 @@ const useInput = (initialValue) => {
     };
 
     const setVal = (value) => {
-        setValue(value)
+        setValue(value);
     }
 
     const clear = () => {
-        setValue('')
+        setValue('');
     }
 
     return {

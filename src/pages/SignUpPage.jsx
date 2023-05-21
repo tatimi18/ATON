@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Form, FormField } from 'semantic-ui-react';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,17 +6,17 @@ import { Button } from 'react-bootstrap';
 
 
 const SignUpPage = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
 	const onSubmit = (data) => {
         //заносим данные в localStorage
-        localStorage.setItem(data.login, data.password)
+        localStorage.setItem(data.login, data.password);
         //обновляем поля
-		reset()
+		reset();
         //переносим пользователя на страницу входа
-        navigate("/", { replace: true })
+        navigate("/", { replace: true });
 	}
     return (
         <section className="signIn">
@@ -81,8 +81,8 @@ const SignUpPage = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default SignUpPage
+export default SignUpPage;
 

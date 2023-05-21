@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const MyInput = ({label, params, placeholder}) => {
     return (
@@ -11,7 +11,8 @@ const MyInput = ({label, params, placeholder}) => {
                 placeholder={placeholder}
             />
         </div>
-    )
-}
+    );
+};
 
-export default MyInput
+export default MyInput;
+;
