@@ -35,17 +35,17 @@
 ### Запуск проекта
 <p>Из терминала</p>
 
-# `npm start`
+### `npm start`
 
-## или
+### или
 
 <p>Docker</p>
 
 1. создать образ по инструкции из Dockerfile
-# `docker build -t image-name .`
+### `docker build -t image-name .`
 
 2. запустить контейнер по образу image-name
-# `docker run -d -p 3000:3000 --name container-name image-name`
+### `docker run -d -p 3000:3000 --name container-name image-name`
 
 3. открыть http://localhost:3000
 <!-- # `посмотреть список работающих контейнеров`
@@ -55,4 +55,4 @@
 ### `docker ps -a` -->
 
 4. остановить контейнер
-# `docker stop container-name`
+### `docker stop container-name`
