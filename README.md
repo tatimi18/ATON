@@ -1,5 +1,9 @@
 <h1 align="center">Fetch, add, update, remove users</h1>
 
+## Демо
+
+<a href='https://tatimi18.github.io/'>Посмотреть демо-версию проекта</a>
+
 ## Описание
 
 <p align="center">
