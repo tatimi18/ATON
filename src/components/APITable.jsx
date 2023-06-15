@@ -11,6 +11,7 @@ import useInput from '../hooks/useInput';
 import MyInput from './UI/input/MyInput';
 import IsValidMessage from './IsValidMessage';
 import TableHead from './TableHead';
+import MySelect from './UI/select/MySelect';
 
 const APITable = () => {
     
@@ -54,8 +55,12 @@ const APITable = () => {
     //состояние уведомлений
     const [alerts, setAlerts] = useState([]);
 
+    //состояние сортировки
+    const [selectedSort, setSelectedSort] = useState('');
+
     function changePage(page) {
         setPage(page);
+        setSelectedSort('')
     };
 
     /* ======= ЗАГРУЗКА ДАННЫХ С СЕРВЕРА ========================================================= */
@@ -202,7 +207,7 @@ const APITable = () => {
         return EMAIL_REGEXP.test(value);
     }
 /* ======= ЛОГИКА УВЕДОМЛЕНИЙ ========================================================= */
-    
+
     //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
     function addNewAlert(message) {
         alerts.push(Math.random() + message);
@@ -214,6 +219,34 @@ const APITable = () => {
         const id = alertToRemove.split('_'[0]);
         alerts.filter(alert => alert.split('_'[0]) !== id);
     };
+
+/* ======= CОРТИРОВКА ========================================================= */
+    function sortingUsers(val) {
+        setSelectedSort(val)
+        let sortedUsers;
+        console.log(users);
+        if (val.split('-')[0] === 'name') {
+            if (val.split('-')[1] === 'UP') {
+                sortedUsers = users.sort((a, b) => a.first_name.localeCompare(b.first_name))
+                setUsers(sortedUsers)
+            } else {
+                sortedUsers = users.sort((a, b) => a.first_name.localeCompare(b.first_name)).reverse()
+                setUsers(sortedUsers)
+            }
+        }
+
+        if (val.split('-')[0] === 'id') {
+            if (val.split('-')[1] === 'UP') {
+                sortedUsers = users.sort((a, b) => a.id - b.id)
+                setUsers(sortedUsers)
+            } else {
+                sortedUsers = users.sort((a, b) => b.id - a.id)
+                setUsers(sortedUsers)
+            }
+        }
+        console.log(users);
+
+    }
 
     return (
         <div className='container'>
@@ -272,13 +305,27 @@ const APITable = () => {
                             }
                             action={() => addNewUser(addedFirstName.value, addedLastName.value, addedEmail.value)}    
                         />
-                        <Button 
-                            style={{marginTop: '70px'}}
-                            onClick={() => setShowAddingModal(true)}
-                            variant="primary"
-                        >   
-                            Добавить в список
-                        </Button>
+                        <div style={{marginTop: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Button
+                                onClick={() => setShowAddingModal(true)}
+                                variant="primary"
+                            >   
+                                Добавить в список
+                            </Button>
+
+                            <MySelect
+                                value={selectedSort}
+                                onChange={sortingUsers}
+                                defaultValue='Сортировка по'
+                                options={[
+                                    {value: 'name-UP', name: 'по имени ↑'},
+                                    {value: 'name-DOWN', name: 'по имени ↓'},
+                                    {value: 'id-UP', name: 'по id ↑'},
+                                    {value: 'id-DOWN', name: 'по id ↓'},
+                                ]}
+                            />
+
+                        </div>
 
                         <MyPagination 
                             totalPages={totalPages} 
