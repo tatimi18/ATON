@@ -49,6 +49,7 @@ const APITable = () => {
     const addedEmail = useInput('');
  
     const [isValid, setIsValid] = useState('default');
+    const [isValidEmail, setIsValidEmail] = useState('default');
 
     //состояние уведомлений
     const [alerts, setAlerts] = useState([]);
@@ -90,8 +91,10 @@ const APITable = () => {
                     addNewAlert('_secondary_Данные остались прежними'); //добавляем новое уведомление 
                     return users; //возвращаем исходник
                     
+                } else if (!isEmailValid(current_email.value)) { //если почта не прошла валидацию выводим ошибку
+                    setIsValidEmail(false)
                 } else { //если изменились, то меняем данные
-                    
+                    setIsValidEmail(true)
                     setIsValid(true);
                     Object.defineProperty(updatedUser, 'first_name', {
                         value: current_firstName.value,
@@ -149,7 +152,11 @@ const APITable = () => {
     function addNewUser(firstName, lastName, email) {
         if (!firstName || !lastName || !email) { //если поля не заполнены форма не отправляется
             setIsValid(false);
-        } else {
+        } else if (firstName && lastName && !isEmailValid(email)) {
+            setIsValid('default')
+            setIsValidEmail(false)
+        }
+        else {
             setIsValid(true);
             const newUser = {
                 id: lastUserInPage + 1,
@@ -182,11 +189,18 @@ const APITable = () => {
         
         //скрываем валидацию
         setIsValid('default');
+        setIsValidEmail('default');
         
         // закрываем модальное окно
         setShowAddingModal(false);
     };
     
+/* ======= ЛОГИКА ВАЛИДАЦИИ ЕМАЙЛА ========================================================= */
+    const EMAIL_REGEXP = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+
+    function isEmailValid(value) {
+        return EMAIL_REGEXP.test(value);
+    }
 /* ======= ЛОГИКА УВЕДОМЛЕНИЙ ========================================================= */
     
     //добавляем новое уведомление с уникальным ключом, удаляем его по прошествии 5 сек
@@ -225,6 +239,7 @@ const APITable = () => {
                                         label={'Электронная почта'} 
                                         params={{value: current_email.value, onChange: current_email.onChange}}
                                     />
+                                    <IsValidMessage message={'Некорректно введена почта'} isValid={isValidEmail}/>
                                     <IsValidMessage message={'Заполните все поля'} isValid={isValid}/>
                                 </form>
                             }
@@ -251,6 +266,7 @@ const APITable = () => {
                                         placeholder={'Введите электронную почту'} 
                                         params={{value: addedEmail.value, onChange: addedEmail.onChange}}
                                     />
+                                    <IsValidMessage message={'Некорректно введена почта'} isValid={isValidEmail}/>
                                     <IsValidMessage message={'Заполните все поля'} isValid={isValid}/>
                                 </form>
                             }
