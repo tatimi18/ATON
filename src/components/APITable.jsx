@@ -224,7 +224,7 @@ const APITable = () => {
     function sortingUsers(val) {
         setSelectedSort(val)
         let sortedUsers;
-        console.log(users);
+
         if (val.split('-')[0] === 'name') {
             if (val.split('-')[1] === 'UP') {
                 sortedUsers = users.sort((a, b) => a.first_name.localeCompare(b.first_name))
@@ -244,8 +244,6 @@ const APITable = () => {
                 setUsers(sortedUsers)
             }
         }
-        console.log(users);
-
     }
 
     return (
