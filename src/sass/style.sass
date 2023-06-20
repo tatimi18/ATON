@@ -7,6 +7,9 @@ html, body
 	height: 100%
 	font-size: 17px
 	font-family: 'Montserrat', sans-serif
+	@media (max-width: 498px)
+		font-size: 14px
+	
 
 .container
 	margin: 0 auto
@@ -46,6 +49,15 @@ html, body
 		width: 96%
 	@media (max-width: 425px)
 		width: 94%
+
+.panel
+	margin-top: 90px 
+	display: flex
+	align-items: center
+	justify-content: space-between
+	@media (max-width: 425px)
+		flex-direction: column
+		height: 83px
 
 @import 'blocks/pagination'
 @import 'blocks/navbar'

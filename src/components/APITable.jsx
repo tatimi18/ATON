@@ -102,10 +102,8 @@ const APITable = () => {
                     first_name: current_firstName.value,
                     last_name: current_lastName.value,
                     email: current_email.value,
-                    'Редактировать': update_icon,
-                    'Удалить': trash_icon
+                    actions: `${update_icon},${trash_icon}`
                 };
-                console.log('newData', newData);
                     
                 currentItem.setData(newData);
                 
@@ -224,7 +222,7 @@ const APITable = () => {
 
             //добавляем нового юзера
             setUsers([...users, newUser].sort((a,b) => compareNumbers(a.id, b.id)));
-                
+
             //стираем заполненные поля и закрываем форму
             handleClose();
             
@@ -288,40 +286,35 @@ const APITable = () => {
     const gridRef = useRef(); // Optional - for accessing Grid's API
 
     const columnDefs = [ //колонки
-        { field: 'id', filter: true, minWidth:70},
-        { field: 'first_name', headerName: 'Имя', filter: true, minWidth: 96 },
-        { field: 'last_name', headerName: 'Фамилия', filter: true, minWidth: 96 },
-        { field: 'email', headerName: 'Эл. почта', filter: true, minWidth: 197 },
+        { field: 'id', filter: true, /* flex:70, */ width: 120,},
+        { field: 'first_name', headerName: 'Имя', filter: true, minWidth: 100 },
+        { field: 'last_name', headerName: 'Фамилия', filter: true, minWidth: 100 },
+        { field: 'email', headerName: 'Эл. почта', filter: true, minWidth: 300, flex: 150 },
         { 
-            field: 'Редактировать', 
+            field: 'actions',
+            headerName: 'Действия', 
+            flex: 100,
+            minWidth: 160,
+            maxWidth: 160,
             sortable: false, 
-            flex: 115,
-            minWidth: 50,
             cellRenderer: params => {
-                return <> <div
+                return <div style={{display: 'flex', justifyContent: 'space-between'}}> 
+                            <div
                                 onClick={() => showUpdateModal(params.data)}
                                 className='circle circle__update'
                                 
                             >   
-                                <img src={params.value} className='change_color' alt="update_icon" />
+                                <img src={params.value.split(',')[0]} className='change_color' alt="update_icon" />
                             </div>
-                        </>;
-            }
-        },
-        { 
-            field: 'Удалить',  
-            sortable: false,
-            minWidth: 50,
-            cellRenderer: params => {
-                return <> <div
+                            <div
                                 onClick={() => removeUser(params.data)}
                                 className='circle circle__delete'
                             >   
-                                <img src={params.value} className='change_color' alt="trash_icon" />
+                                <img src={params.value.split(',')[1]} className='change_color' alt="trash_icon" />
                             </div>
-                        </>;
+                        </div>;
             }
-        } 
+        }
     ];
 
     // DefaultColDef sets props common to all Columns
@@ -339,8 +332,7 @@ const APITable = () => {
 
     //добавляем новые свойства-путь к иконке в объект юзер
     for (let user of users) {
-        user['Редактировать'] = update_icon
-        user['Удалить'] = trash_icon
+        user['actions'] = `${update_icon},${trash_icon}`
     }
 
     //замена отриц чисел на положительные
@@ -410,7 +402,7 @@ const APITable = () => {
                         />
                     </div>
 
-                    <div style={{marginTop: '90px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <div className='panel'>
                         <Button
                             onClick={() => setShowAddingModal(true)}
                             variant="primary"
@@ -427,7 +419,6 @@ const APITable = () => {
                                 onChange={(e) => handleItemsCountOnPageChange(e.target.value)}
                             />
                         </div>
-
                     </div>
 
                     <div className="ag-theme-alpine" style={{width: '100%', height: 700, marginTop: '30px'}}>

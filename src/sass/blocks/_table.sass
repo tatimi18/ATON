@@ -46,6 +46,17 @@ th, td
 
 	--ag-grid-size: 10px
 	--ag-list-item-height: 30px
+	@media (max-width: 498px)
+		--ag-font-size: 12px
+		--ag-grid-size: 12px
+		--ag-list-item-height: 10px
+
+.ag-paging-panel 
+	@media (max-width: 498px)
+		display: flex
+		align-items: center
+		flex-direction: column
+		justify-content: center
 
 .circle
 	width: 40px
