@@ -16,10 +16,10 @@ import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
+
 const APITable = () => {
     
     /* ======= СОСТОЯНИЯ ========================================================= */
-    const gridRef = useRef(); // Optional - for accessing Grid's API
     
     //состояния для работы со списком пользователей
     const [users, setUsers] = useState([]);
@@ -102,12 +102,13 @@ const APITable = () => {
                     first_name: current_firstName.value,
                     last_name: current_lastName.value,
                     email: current_email.value,
-                    updateBtn: update_icon,
-                    removeBtn: trash_icon
+                    'Редактировать': update_icon,
+                    'Удалить': trash_icon
                 };
+                console.log('newData', newData);
                     
                 currentItem.setData(newData);
-        
+                
                 setShowUpdatingModal(false); //закрываем модальное окно
                 addNewAlert('_info_Пользователь изменен'); //добавляем новое уведомление 
             };
@@ -148,6 +149,8 @@ const APITable = () => {
         } else { //если true, то извлекаем айдишник из внутреннего свойства строки
             lastUserNode = lastUserNode.data.id
         }
+        //добавляем новое уведомление
+        addNewAlert('_danger_Пользователь удален');
     };
     
     
@@ -282,36 +285,40 @@ const APITable = () => {
 
 /* ======= ТАБЛИЦА ========================================================= */
 
+    const gridRef = useRef(); // Optional - for accessing Grid's API
+
     const columnDefs = [ //колонки
-        { field: 'id', filter: true, maxWidth: 100 },
-        { field: 'first_name', headerName: 'Имя', filter: true },
-        { field: 'last_name', headerName: 'Фамилия', filter: true },
-        { field: 'email', headerName: 'Эл. почта', filter: true, minWidth: 400 },
+        { field: 'id', filter: true, minWidth:70},
+        { field: 'first_name', headerName: 'Имя', filter: true, minWidth: 96 },
+        { field: 'last_name', headerName: 'Фамилия', filter: true, minWidth: 96 },
+        { field: 'email', headerName: 'Эл. почта', filter: true, minWidth: 197 },
         { 
-            field: 'updateBtn', 
+            field: 'Редактировать', 
             sortable: false, 
-            maxWidth: 100,
+            flex: 115,
+            minWidth: 50,
             cellRenderer: params => {
-                return <> <Button
+                return <> <div
                                 onClick={() => showUpdateModal(params.data)}
-                                variant="info"
-                                >   
-                                <img src={params.value} alt="update_icon" />
-                            </Button>
+                                className='circle circle__update'
+                                
+                            >   
+                                <img src={params.value} className='change_color' alt="update_icon" />
+                            </div>
                         </>;
             }
         },
         { 
-            field: 'removeBtn',  
+            field: 'Удалить',  
             sortable: false,
-            maxWidth: 100,
+            minWidth: 50,
             cellRenderer: params => {
-                return <> <Button
+                return <> <div
                                 onClick={() => removeUser(params.data)}
-                                variant="danger"
+                                className='circle circle__delete'
                             >   
-                                <img src={params.value} alt="update_icon" />
-                            </Button>
+                                <img src={params.value} className='change_color' alt="trash_icon" />
+                            </div>
                         </>;
             }
         } 
@@ -319,7 +326,8 @@ const APITable = () => {
 
     // DefaultColDef sets props common to all Columns
     const defaultColDef = useMemo( ()=> ({
-        sortable: true
+        sortable: true,
+        cellClass: 'myCell'
     }));
 
     //поиск строки по айдишнику
@@ -331,8 +339,8 @@ const APITable = () => {
 
     //добавляем новые свойства-путь к иконке в объект юзер
     for (let user of users) {
-        user['updateBtn'] = update_icon
-        user['removeBtn'] = trash_icon
+        user['Редактировать'] = update_icon
+        user['Удалить'] = trash_icon
     }
 
     //замена отриц чисел на положительные
@@ -422,18 +430,16 @@ const APITable = () => {
 
                     </div>
 
-                    <div className="ag-theme-alpine" style={{width: '100%', height: 400, marginTop: '30px'}}>
+                    <div className="ag-theme-alpine" style={{width: '100%', height: 700, marginTop: '30px'}}>
                         <AgGridReact
                             ref={gridRef} // Ref for accessing Grid's API
-                            //detailRowHeight={200}
-
+                            //rowHeight={80}
                             rowData={users} // Row Data for Rows
 
                             columnDefs={columnDefs} // Column Defs for Columns
                             defaultColDef={defaultColDef} // Default Column Properties
 
                             animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-
                             pagination={true}
                             paginationPageSize={paginationPageSize}
                             getRowId={getRowId}
