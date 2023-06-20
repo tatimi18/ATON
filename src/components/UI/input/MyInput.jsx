@@ -5,7 +5,7 @@ const MyInput = ({label, params, placeholder}) => {
         <div className='signIn__field'>
             <label className='modal__label' htmlFor="lastName">{label}</label>
             <input 
-                type='text'  
+                type={'text' | 'number'}  
                 className='signIn__input'
                 {...params}
                 placeholder={placeholder}

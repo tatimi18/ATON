@@ -22,7 +22,7 @@
   <img src="src/demo/actions.gif" width="90%">
 </p>
 
-1. Добавить новые данные (объект) на текущую страницу (далее юзер). Юзер добавляется в конец списка со своим уникальным id
+1. Добавить новые данные (объект) на текущую страницу (далее юзер). Юзер добавляется в конец списка со своим уникальным id, id следующих в списке юзеров перезаписываются
 2. Изменить данные любого юзера из списка
 3. Удалить юзера из списка
 4. Переходить по страницам таблицы
@@ -35,9 +35,10 @@
 4. <a href='https://www.npmjs.com/package/react-bootstrap'>React-bootstrap</a>
 5. <a href='https://www.npmjs.com/package/semantic-ui-react'>Semantic-ui-react</a>
 6. <a href='https://www.npmjs.com/package/react-hook-form'>React-hook-form</a>
-7. <a href='https://www.npmjs.com/package/axios'>Axios</a>
-8. <a href='https://www.docker.com/'>Docker</a>
-9. <a href='https://sass-lang.com/'>SASS</a>
+7. <a href='https://www.ag-grid.com/'>AG-Grid</a>
+8. <a href='https://www.npmjs.com/package/axios'>Axios</a>
+9. <a href='https://www.docker.com/'>Docker</a>
+10. <a href='https://sass-lang.com/'>SASS</a>
 
 ## Запуск проекта
 <h3>Из терминала</h3>
